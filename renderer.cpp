@@ -7,23 +7,28 @@ Renderer::Renderer(Image& m,const float f)
 
 Renderer::~Renderer() {}
 
-vec3f Renderer::cast_ray(const vec3f& orig, const vec3f& d, const std::vector<Sphere>& scene) {
+vec3f Renderer::cast_ray(const vec3f& orig, const vec3f& d, const std::vector<Sphere>& scene, const std::vector<Light>& lights) {
     
     vec3f hitPoint, normal;
     Material material;
     if(scene_intersect(orig, d, scene, hitPoint, normal, material)) {
-        return material.getDiffuseColor();
+        float diffuse_intensity = 0;
+        for(const auto& light: lights) {
+            vec3f light_dir = (light.getPoint() - hitPoint).normalize();
+            diffuse_intensity += light.getIntensity() * std::max(0.0f, normal * light_dir);
+        }
+        return material.getDiffuseColor() * diffuse_intensity;
     }
     return vec3f(0.2, 0.7, 0.8); // background color
 }
 
-void Renderer::render(const std::vector<Sphere>& scene) {
+void Renderer::render(const std::vector<Sphere>& scene, const std::vector<Light>& lights) {
     for(size_t x = 0; x < image.getWidth(); x++) {
         for(size_t y = 0; y < image.getHeight(); y++) {
             float dx = (2 * (x  + 0.5)/(float)image.getWidth() - 1) * std::tan(fov / 2.0f) * image.getRatio();
             float dy = -(2 * (y + 0.5)/(float)image.getHeight() - 1) * std::tan(fov / 2.0f);
             vec3f d = vec3f(dx, dy, -1).normalize();
-            image.set(x, y, cast_ray(vec3f(0,0,0), d, scene));
+            image.set(x, y, cast_ray(vec3f(0,0,0), d, scene, lights));
         }
     }
 }

@@ -18,6 +18,9 @@ int main(int, char**) {
     spheres.push_back(Sphere(vec3f(-1.0, -1.5, -12), 2, red_rubber));
     spheres.push_back(Sphere(vec3f( 1.5, -0.5, -18), 3, red_rubber));
     spheres.push_back(Sphere(vec3f( 7,    5,   -18), 4, ivory));
-    r.render(spheres);
+
+    std::vector<Light> lights;
+    lights.push_back(Light(vec3f(-20, 20,  20), 1.5));
+    r.render(spheres, lights);
     r.output(result_path);
 }
