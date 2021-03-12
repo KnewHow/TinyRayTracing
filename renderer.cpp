@@ -7,17 +7,23 @@ Renderer::Renderer(Image& m,const float f)
 
 Renderer::~Renderer() {}
 
+vec3f  Renderer::reflect(const vec3f& I, const vec3f& N) {
+    return I - 2 * N * (N * I);
+}
+
 vec3f Renderer::cast_ray(const vec3f& orig, const vec3f& d, const std::vector<Sphere>& scene, const std::vector<Light>& lights) {
     
     vec3f hitPoint, normal;
     Material material;
     if(scene_intersect(orig, d, scene, hitPoint, normal, material)) {
         float diffuse_intensity = 0;
+        float specular_intensity = 0;
         for(const auto& light: lights) {
             vec3f light_dir = (light.getPoint() - hitPoint).normalize();
             diffuse_intensity += light.getIntensity() * std::max(0.0f, normal * light_dir);
+            specular_intensity += powf(std::max(0.0f, reflect(light_dir, normal) * d), material.getSpecularExponent()) * light.getIntensity();
         }
-        return material.getDiffuseColor() * diffuse_intensity;
+        return material.getDiffuseColor() * (diffuse_intensity + specular_intensity);
     }
     return vec3f(0.2, 0.7, 0.8); // background color
 }

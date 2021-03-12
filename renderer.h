@@ -13,6 +13,15 @@ private:
     Image& image;
     const float fov;
 
+
+    /**
+     * calculate the reflect ray from input I and normal
+     * @param I the input ray
+     * @param normal the normal of current ray hit the surface
+     * @return the reflect ray from current ray input and normal
+     */ 
+    vec3f reflect(const vec3f& I, const vec3f& N);
+
     /**
      * cast ray insersect with secen, and return the color the ray pass the pixel. 
      * In this function, it will calculate the color with lights
