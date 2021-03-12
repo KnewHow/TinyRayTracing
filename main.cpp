@@ -1,15 +1,23 @@
 #include <iostream>
 
 #include "image.h"
+#include "renderer.h"
+#include "global.h"
 
 int main(int, char**) {
-    int width = 800;
-    int height = 800;
-    image image(width, height);
-    for(int i = 0; i < width; i++) {
-        for(int j = 0; j < height; j++) {
-            image.set(i, j, vec3f((float)i/width, (float)j/height, 0));
-        }
-    }
-    image.write("./result.ppm");
+    int width = 1366;
+    int height = 768;
+    Image image(width, height);
+    std::string result_path = "./result.ppm";
+    Renderer r(image, MY_PI/2);
+    Material      ivory(vec3f(0.4, 0.4, 0.3));
+    Material red_rubber(vec3f(0.3, 0.1, 0.1));
+
+    std::vector<Sphere> spheres;
+    spheres.push_back(Sphere(vec3f(-3,    0,   -16), 2, ivory));
+    spheres.push_back(Sphere(vec3f(-1.0, -1.5, -12), 2, red_rubber));
+    spheres.push_back(Sphere(vec3f( 1.5, -0.5, -18), 3, red_rubber));
+    spheres.push_back(Sphere(vec3f( 7,    5,   -18), 4, ivory));
+    r.render(spheres);
+    r.output(result_path);
 }

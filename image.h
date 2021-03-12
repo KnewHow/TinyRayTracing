@@ -1,18 +1,26 @@
+#ifndef __IMAGE_H__
+#define __IMAGE_H__
+
 #include <vector>
 #include <string>
 
 #include "geometry.h"
 
 
-class image
+class Image
 {
 private:
    int width;
    int height;
    std::vector<vec3f> fragment_buffer;
 public:
-    image(int w, int h);
-    ~image();
+    Image(int w, int h);
+    ~Image();
     void write(const std::string& filepath);
     void set(int x, int y, const vec3f& rgb);
+    inline int getWidth() const{ return width; }
+    inline int getHeight() const { return height; }
+    inline float getRatio() const { return (float)width/(float)height; }
 };
+
+#endif

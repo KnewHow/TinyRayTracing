@@ -3,18 +3,18 @@
 #include <fstream>
 #include <iostream>
 
-image::image(int w, int h)
+Image::Image(int w, int h)
     :width(w), height(h), fragment_buffer(w * h, vec3f(0, 0, 0))
 {
     
 }
 
-image::~image()
+Image::~Image()
 {
 
 }
 
-void image::write(const std::string& filepath) {
+void Image::write(const std::string& filepath) {
     std::ofstream ofs;
     ofs.open(filepath);
     ofs << "P6\n" << width << " " << height << "\n255\n";
@@ -26,6 +26,6 @@ void image::write(const std::string& filepath) {
     ofs.close();
 }
 
-void image::set(int x, int y, const vec3f& rgb) {
+void Image::set(int x, int y, const vec3f& rgb) {
     fragment_buffer[x + y * width] = rgb;
 }

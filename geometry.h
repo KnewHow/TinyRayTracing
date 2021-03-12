@@ -304,5 +304,4 @@ typedef mat<float, 2, 2> mat2f;
 typedef mat<int, 2, 2> mat2i;
 
 
-
 #endif
