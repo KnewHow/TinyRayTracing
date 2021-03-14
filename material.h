@@ -6,17 +6,19 @@
 class Material
 {
 private:
-    vec2f albedo;
+    vec4f albedo;
     vec3f diffuse_color;
     float specular_exponent;
+    float refractive_index;
 
 public:
     Material();
-    Material(const vec2f& a, const vec3f& dc, const float se);
+    Material(const vec4f a, const vec3f dc, const float se, const float ri);
     ~Material();
     inline vec3f getDiffuseColor() const { return diffuse_color; }
-    inline vec2f getAlbedo() const { return albedo; }
+    inline vec4f getAlbedo() const { return albedo; }
     inline float getSpecularExponent() const { return specular_exponent; }
+    inline float getRefractiveIndex() const { return refractive_index; }
 };
 
 

@@ -23,6 +23,15 @@ private:
     vec3f reflect(const vec3f& I, const vec3f& N);
 
     /**
+     * calculate the refract ray with light, normal and refractive_index, then return the refract ray if refraction happen.
+     * @param I the incident ray, it is must unit vector
+     * @param N the normal of current plane, it's must unit vector
+     * @param refractive_index the refractive_index the ray will enter
+     * @return the ray refractive vector in next media.
+    */
+    vec3f refract(const vec3f& I, const vec3f& N, const float& refractive_index);
+
+    /**
      * cast ray insersect with secen, and return the color the ray pass the pixel. 
      * In this function, it will calculate the color with lights
      * 
@@ -30,9 +39,11 @@ private:
      * @param d the directory of the ray
      * @param scene the scene consisted by shpere
      * @param lights the lights of the scene
+     * @param depth the depth the ray recursive to search reflection ray, defalut is 0
      * @return if the ray intersect with the scene, return the hit point color, otherwise return the background color 
+     * 
     */
-    vec3f cast_ray(const vec3f& orig, const vec3f& d, const std::vector<Sphere>& scene, const std::vector<Light>& lights);
+    vec3f cast_ray(const vec3f& orig, const vec3f& d, const std::vector<Sphere>& scene, const std::vector<Light>& lights, std::size_t depth = 0);
     
     /**
      * a ray intersect with a scene, it will return hit infomation with the lastest sphere

@@ -64,6 +64,12 @@ template<class T, int n> vec<T, n> operator/(const vec<T, n>& lhs, const double 
     return ret;
 }
 
+template<class T, int n> vec<T, n> operator-(const vec<T, n> v) {
+    vec<T, n> ret = v;
+    for(int i =n; i--; ret[i] = -ret[i]);
+    return ret;
+}
+
 template<class T, int n1, int n2> vec<T, n1> embed(const vec<T, n2>& v, T fill = 1) {
     vec<T, n1> ret;
     for(int i = n1; i--; ret[i] = (i < n2 ? v[i] : fill));
@@ -141,6 +147,38 @@ template<class T> struct vec<T, 3>
 
     T x, y, z;
 };
+
+template<class T> struct vec<T, 4>
+{
+    vec() = default;
+    vec(T X, T Y, T Z, T W)
+        :x(X), y(Y), z(Z), w(W){}
+    T operator[](const int i) const {
+        assert(i >= 0 && i < 4);
+        return i == 0 ? x :
+                    i == 1 ? y :
+                        i == 2 ? z : w;
+
+    }
+
+    T& operator[](const int i) {
+        assert(i >= 0 && i < 4);
+        return i == 0 ? x :
+                    i == 1 ? y :
+                        i == 2 ? z : w;
+
+    }
+
+    double norm2() const { return (*this)*(*this); }
+    double norm() const { return std::sqrt(norm2()); }
+    vec& normalize() {
+        *this = *this / norm(); 
+        return *this;
+    }
+
+    T x, y, z, w;
+};
+
 
 
 typedef vec<float, 2> vec2f;

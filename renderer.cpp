@@ -11,21 +11,59 @@ vec3f  Renderer::reflect(const vec3f& I, const vec3f& N) {
     return I - 2 * N * (N * I);
 }
 
-vec3f Renderer::cast_ray(const vec3f& orig, const vec3f& d, const std::vector<Sphere>& scene, const std::vector<Light>& lights) {
-    
+vec3f Renderer::refract(const vec3f& I, const vec3f& N, const float& refractive_index) {
+    // implement refer: https://en.wikipedia.org/wiki/Snell%27s_law vector form
+    float cos_theta_1 = -(I * N);
+    float n1 = 1;
+    float n2 = refractive_index;
+    vec3f n = N;
+    if(cos_theta_1 < 0) { // if cos(theta_1) is negative, it indicates the ray is in the object inner, we will exchange params.
+        cos_theta_1 = -cos_theta_1;
+        std::swap(n1, n2);
+        n = -n;
+    }
+
+    float k = 1 - (n1 / n2) * (n1 / n2) * (1 - cos_theta_1 * cos_theta_1);
+    float cos_theat_2 = std::sqrt(k);
+    return k < 0 ? vec3f(1, 0, 0) : I * (n1 / n2) + ((n1 / n2) * cos_theta_1 - cos_theat_2) * n; // k less zero return a vector(1, 0, 0)  to avoid normalized() errors, it is not any physical meaning.
+}
+
+vec3f Renderer::cast_ray(const vec3f& orig, const vec3f& d, const std::vector<Sphere>& scene, const std::vector<Light>& lights, std::size_t depth) {
     vec3f hitPoint, normal;
     Material material;
-    if(scene_intersect(orig, d, scene, hitPoint, normal, material)) {
-        float diffuse_intensity = 0;
-        float specular_intensity = 0;
-        for(const auto& light: lights) {
-            vec3f light_dir = (light.getPoint() - hitPoint).normalize();
-            diffuse_intensity += light.getIntensity() * std::max(0.0f, normal * light_dir);
-            specular_intensity += powf(std::max(0.0f, reflect(light_dir, normal) * d), material.getSpecularExponent()) * light.getIntensity();
-        }
-        return material.getDiffuseColor() * (diffuse_intensity + specular_intensity);
+    if(depth > 4 || !scene_intersect(orig, d, scene, hitPoint, normal, material)) {
+        return vec3f(0.2, 0.7, 0.8); // background color
     }
-    return vec3f(0.2, 0.7, 0.8); // background color
+
+    vec3f reflect_ray = reflect(d, normal).normalize();
+    vec3f reflect_point = reflect_ray * normal > 0 ? hitPoint + normal * 1e-3 : hitPoint - normal * 1e-3; // avoid intersect with itselt, let it is above or down a little.
+    vec3f reflect_color = cast_ray(reflect_point, reflect_ray, scene, lights, depth + 1);
+
+    vec3f refract_ray = refract(d, normal, material.getRefractiveIndex()).normalize();
+    vec3f refract_point = refract_ray * normal < 0 ? hitPoint - normal * 1e-3  : hitPoint + normal * 1e-3;
+    vec3f refract_color = cast_ray(refract_point, refract_ray, scene, lights, depth + 1);
+    
+    float diffuse_intensity = 0;
+    float specular_intensity = 0;
+
+    for(const auto& light: lights) {
+        vec3f light_dir = (light.getPoint() - hitPoint).normalize();
+        double distance = (light.getPoint() - hitPoint).norm();
+        vec3f shadow_orig = light_dir * normal < 0 ? hitPoint - normal * 1e-3 : hitPoint + normal * 1e-3; // because the point lies on the surface, it's will make the line from this to lightDir don't intersect with itself.
+        vec3f shadow_hit, shadow_normal;
+        Material tempMaterial;
+        if(scene_intersect(shadow_orig, light_dir, scene, shadow_hit, shadow_normal, tempMaterial) && (shadow_orig - shadow_hit).norm() < distance) // if there another intersect point with others object, we will think the ray is sheltered, skit it!
+            continue;
+        diffuse_intensity += light.getIntensity() * std::max(0.0f, normal * light_dir);
+        specular_intensity += light.getIntensity() * powf(std::max(0.0f, reflect(light_dir, normal) * d), material.getSpecularExponent());
+    }
+
+    return material.getDiffuseColor() * diffuse_intensity * material.getAlbedo()[0] +
+           vec3f(1, 1, 1) * specular_intensity * material.getAlbedo()[1] +
+           reflect_color * material.getAlbedo()[2] +
+           refract_color * material.getAlbedo()[3];
+
+    
 }
 
 void Renderer::render(const std::vector<Sphere>& scene, const std::vector<Light>& lights) {
