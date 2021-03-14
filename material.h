@@ -15,6 +15,7 @@ public:
     Material();
     Material(const vec4f a, const vec3f dc, const float se, const float ri);
     ~Material();
+    void setDiffuse(const vec3f& dc);
     inline vec3f getDiffuseColor() const { return diffuse_color; }
     inline vec4f getAlbedo() const { return albedo; }
     inline float getSpecularExponent() const { return specular_exponent; }

@@ -30,7 +30,8 @@ private:
      * @return the ray refractive vector in next media.
     */
     vec3f refract(const vec3f& I, const vec3f& N, const float& refractive_index);
-
+    
+    
     /**
      * cast ray insersect with secen, and return the color the ray pass the pixel. 
      * In this function, it will calculate the color with lights

@@ -125,7 +125,7 @@ template<class T> struct vec<T, 2>
 template<class T> struct vec<T, 3>
 {
     vec() = default;
-    vec(double X, double Y, double Z): x(X), y(Y), z(Z){}
+    vec(T X, T Y, T Z): x(X), y(Y), z(Z){}
     T& operator[](const int i){
         assert(i >= 0 && i < 3);
         return i == 0 ? x : (i == 1) ? y : z;

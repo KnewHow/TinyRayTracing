@@ -1,7 +1,7 @@
 #include "material.h"
 
 Material::Material()
-    :diffuse_color(){}
+    : albedo(1, 0, 0, 0), diffuse_color(), specular_exponent(), refractive_index(1){}
 
 
 Material::Material(const vec4f a, const vec3f dc, const float se, const float ri)
@@ -10,4 +10,8 @@ Material::Material(const vec4f a, const vec3f dc, const float se, const float ri
 
 Material::~Material()
 {
+}
+
+void Material::setDiffuse(const vec3f& dc) {
+    diffuse_color = dc;
 }

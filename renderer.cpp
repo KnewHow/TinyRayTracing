@@ -28,6 +28,7 @@ vec3f Renderer::refract(const vec3f& I, const vec3f& N, const float& refractive_
     return k < 0 ? vec3f(1, 0, 0) : I * (n1 / n2) + ((n1 / n2) * cos_theta_1 - cos_theat_2) * n; // k less zero return a vector(1, 0, 0)  to avoid normalized() errors, it is not any physical meaning.
 }
 
+
 vec3f Renderer::cast_ray(const vec3f& orig, const vec3f& d, const std::vector<Sphere>& scene, const std::vector<Light>& lights, std::size_t depth) {
     vec3f hitPoint, normal;
     Material material;
@@ -58,11 +59,10 @@ vec3f Renderer::cast_ray(const vec3f& orig, const vec3f& d, const std::vector<Sp
         specular_intensity += light.getIntensity() * powf(std::max(0.0f, reflect(light_dir, normal) * d), material.getSpecularExponent());
     }
 
-    return material.getDiffuseColor() * diffuse_intensity * material.getAlbedo()[0] +
-           vec3f(1, 1, 1) * specular_intensity * material.getAlbedo()[1] +
-           reflect_color * material.getAlbedo()[2] +
-           refract_color * material.getAlbedo()[3];
-
+    return material.getDiffuseColor() * diffuse_intensity * material.getAlbedo().x +
+           vec3f(1, 1, 1) * specular_intensity * material.getAlbedo().y +
+           reflect_color * material.getAlbedo().z +
+           refract_color * material.getAlbedo().w;
     
 }
 
@@ -78,19 +78,31 @@ void Renderer::render(const std::vector<Sphere>& scene, const std::vector<Light>
 }
 
 bool Renderer::scene_intersect(const vec3f& orig, const vec3f& d, const std::vector<Sphere>& spheres, vec3f& hit, vec3f& normal, Material& material) {
-    bool isIntersect = false;
-    float t = std::numeric_limits<float>::max();
+    float sphere_t = std::numeric_limits<float>::max();
     for(const Sphere& sphere: spheres) {
         float t0;
-        if(sphere.rayIntersect(orig, d, t0) && t0 < t) {
-            isIntersect = true;
-            t = t0;
-            hit = orig + t * d;
+        if(sphere.rayIntersect(orig, d, t0) && t0 < sphere_t) {
+            sphere_t = t0;
+            hit = orig + sphere_t * d;
             normal = (hit - sphere.getCenter()).normalize();
             material = sphere.getMaterial();
         }
     }
-    return isIntersect;
+
+    float checkerboard_t = std::numeric_limits<float>::max();
+    if(std::fabs(d.y) > 1e-3) {
+        float cb_t= -(orig.y + 4) / d.y; // the checkerboard plane has equation y = -4, cb_t is ray intersect with the checkerboard plane
+        vec3f cb_hit_point = orig + cb_t * d; // the point the ray intersect with checkerboard plane
+        if(cb_t > 0 && std::fabs(cb_hit_point.x) < 10 && 
+            cb_hit_point.z < -10 && cb_hit_point.z > -30 && cb_t < sphere_t) {
+                checkerboard_t = cb_t;
+                hit = cb_hit_point;
+                normal = vec3f(0, 1, 0);
+                material.setDiffuse((int(.5 * hit.x + 1000) + int(.5 * hit.z)) & 1 ? vec3f(.3, .3, .3) : vec3f(.3, .2, .1));
+            }
+    } 
+
+    return std::min(sphere_t, checkerboard_t) < 1000;
 }
 
 void Renderer::output(const std::string& filepath) {

@@ -9,7 +9,7 @@ int main(int, char**) {
     int height = 768;
     Image image(width, height);
     std::string result_path = "./result.ppm";
-    Renderer r(image, MY_PI/2);
+    Renderer r(image, MY_PI/3);
     
     Material      ivory(vec4f(0.6,  0.3, 0.1, 0.0), vec3f(0.4, 0.4, 0.3),   50.0f, 1.0f);
     Material      glass(vec4f(0.0,  0.5, 0.1, 0.8), vec3f(0.6, 0.7, 0.8),  125.0, 1.5f);
