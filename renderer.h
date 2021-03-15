@@ -11,8 +11,9 @@
 class Renderer {
 private:
     Image& image;
+    const Image& env;
     const float fov;
-
+    int ray_trace_times;
 
     /**
      * calculate the reflect ray from input I and normal
@@ -44,7 +45,7 @@ private:
      * @return if the ray intersect with the scene, return the hit point color, otherwise return the background color 
      * 
     */
-    vec3f cast_ray(const vec3f& orig, const vec3f& d, const std::vector<Sphere>& scene, const std::vector<Light>& lights, std::size_t depth = 0);
+    vec3f cast_ray(const vec3f& orig, const vec3f& d, const std::vector<Sphere>& scene, const std::vector<Light>& lights, std::size_t depth = 0, const vec3f& backgound = vec3f(0.2, 0.7, 0.8));
     
     /**
      * a ray intersect with a scene, it will return hit infomation with the lastest sphere
@@ -65,10 +66,11 @@ public:
      * @param f the field of view 
      * @param lights the lights of the secen
     */
-    Renderer(Image& m, const float f);
+    Renderer(Image& m, const float f, const Image& e);
     ~Renderer();
     void render(const std::vector<Sphere>& sphere, const std::vector<Light>& lights);
     void output(const std::string& filepath);
+    void setRayTraceTimes(const int& t);
 };
 
 #endif

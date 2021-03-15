@@ -4,7 +4,7 @@
 #include <iostream>
 
 Image::Image(int w, int h)
-    :width(w), height(h), fragment_buffer(w * h, vec3f(0, 0, 0))
+    :width(w), height(h), fragment_buffer(w * h, vec3f(0,0,0))
 {
     
 }
@@ -27,5 +27,6 @@ void Image::write(const std::string& filepath) {
 }
 
 void Image::set(int x, int y, const vec3f& rgb) {
-    fragment_buffer[x + y * width] = rgb;
+    int idx = x + y * width;
+    fragment_buffer[idx] = rgb;
 }

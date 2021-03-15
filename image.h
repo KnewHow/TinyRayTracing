@@ -21,6 +21,8 @@ public:
     inline int getWidth() const{ return width; }
     inline int getHeight() const { return height; }
     inline float getRatio() const { return (float)width/(float)height; }
+    inline const std::vector<vec3f>& getBuffer() const { return fragment_buffer; }
+    inline const vec3f& getPixelColor(int x, int y) const { return fragment_buffer[x + y * width]; }
 };
 
 #endif
