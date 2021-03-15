@@ -6,7 +6,6 @@
 
 #include "geometry.h"
 
-
 class Image
 {
 private:

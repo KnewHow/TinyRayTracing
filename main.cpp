@@ -3,13 +3,14 @@
 #include "image.h"
 #include "renderer.h"
 #include "global.h"
-#include "lib/std_image.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "lib/stb/stb_image.h"
 
 int main(int, char**) {
     int width = 1366;
     int height = 768;
     Image image(width, height);
-    std::string result_path = "../out.ppm";
+    std::string result_path = "../out.jpg";
     
     // environment picture loader
     std::string env_path = "../res/envmap.jpg";
