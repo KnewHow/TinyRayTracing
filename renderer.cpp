@@ -29,20 +29,22 @@ vec3f Renderer::refract(const vec3f& I, const vec3f& N, const float& refractive_
 }
 
 
-vec3f Renderer::cast_ray(const vec3f& orig, const vec3f& d, const std::vector<Sphere>& scene, const std::vector<Light>& lights, std::size_t depth, const vec3f& backgound) {
+vec3f Renderer::cast_ray(const vec3f& orig, const vec3f& d, const std::vector<Sphere>& scene, const std::vector<Light>& lights, std::size_t depth) {
     vec3f hitPoint, normal;
     Material material;
     if(depth > ray_trace_times || !scene_intersect(orig, d, scene, hitPoint, normal, material)) {
-       return backgound;
+        int a = std::max(0, std::min(env.getWidth() -1, static_cast<int>((atan2(d.z, d.x)/(2 * M_PI) + .5)* env.getWidth()))); // TODO understand why
+        int b = std::max(0, std::min(env.getHeight() -1, static_cast<int>(acos(d.y)/M_PI * env.getHeight()))); // TODO understand why
+        return env.getPixelColor(a, b); // background color
     }
 
     vec3f reflect_ray = reflect(d, normal).normalize();
     vec3f reflect_point = reflect_ray * normal > 0 ? hitPoint + normal * 1e-3 : hitPoint - normal * 1e-3; // avoid intersect with itselt, let it is above or down a little.
-    vec3f reflect_color = cast_ray(reflect_point, reflect_ray, scene, lights, depth + 1, backgound);
+    vec3f reflect_color = cast_ray(reflect_point, reflect_ray, scene, lights, depth + 1);
 
     vec3f refract_ray = refract(d, normal, material.getRefractiveIndex()).normalize();
     vec3f refract_point = refract_ray * normal < 0 ? hitPoint - normal * 1e-3  : hitPoint + normal * 1e-3;
-    vec3f refract_color = cast_ray(refract_point, refract_ray, scene, lights, depth + 1, backgound);
+    vec3f refract_color = cast_ray(refract_point, refract_ray, scene, lights, depth + 1);
     
     float diffuse_intensity = 0;
     float specular_intensity = 0;
@@ -67,15 +69,13 @@ vec3f Renderer::cast_ray(const vec3f& orig, const vec3f& d, const std::vector<Sp
 }
 
 void Renderer::render(const std::vector<Sphere>& scene, const std::vector<Light>& lights) {
-    #pragma omp parallel for
+    // #pragma omp parallel for
     for(size_t x = 0; x < image.getWidth(); x++) {
         for(size_t y = 0; y < image.getHeight(); y++) {
             float dx = (2 * (x  + 0.5)/(float)image.getWidth() - 1) * std::tan(fov / 2.0f) * image.getRatio();
             float dy = -(2 * (y + 0.5)/(float)image.getHeight() - 1) * std::tan(fov / 2.0f);
             vec3f d = vec3f(dx, dy, -1).normalize();
-            int x_env = (float)x * env.getWidth() / 3.0f / image.getWidth();
-            int y_env = (float)y * env.getHeight() / 1.2f / image.getHeight();
-            image.set(x, y, cast_ray(vec3f(0,0,0), d, scene, lights, 0, env.getPixelColor(x_env, y_env)));
+            image.set(x, y, cast_ray(vec3f(0,0,0), d, scene, lights, 0));
         }
     }
 }
@@ -101,7 +101,7 @@ bool Renderer::scene_intersect(const vec3f& orig, const vec3f& d, const std::vec
                 checkerboard_t = cb_t;
                 hit = cb_hit_point;
                 normal = vec3f(0, 1, 0);
-                material.setDiffuse((int(.5 * hit.x + 1000) + int(.5 * hit.z)) & 1 ? vec3f(.3, .3, .3) : vec3f(.3, .2, .1));
+                material.setDiffuse((int(.5 * hit.x + 1000) + int(.5 * hit.z)) & 1 ? vec3f(.3, .3, .3) : vec3f(.3, .2, .1)); // TODO understand why
             }
     } 
 

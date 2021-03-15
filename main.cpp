@@ -42,7 +42,7 @@ int main(int, char**) {
     spheres.push_back(Sphere(vec3f(-3,    0,   -16), 2,      ivory));
     spheres.push_back(Sphere(vec3f(-1.0, -1.5, -12), 2,      glass));
     spheres.push_back(Sphere(vec3f( 1.5, -0.5, -18), 3, red_rubber));
-    spheres.push_back(Sphere(vec3f( 7,    5,   -18), 4,     mirror));
+    spheres.push_back(Sphere(vec3f( 7,    5,   -20), 4,     mirror));
 
     std::vector<Light> lights;
     lights.push_back(Light(vec3f(-20, 20,  20), 1.5));

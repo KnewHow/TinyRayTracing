@@ -18,16 +18,6 @@ Image::~Image()
 }
 
 void Image::write(const std::string& filepath) {
-    // std::ofstream ofs;
-    // ofs.open(filepath);
-    // ofs << "P6\n" << width << " " << height << "\n255\n";
-    // for(size_t i = 0; i < width * height; i++) {
-    //     for(size_t j = 0; j < 3; j++) {
-    //         ofs << (char)(255 * std::max(0.f, std::min(1.f, fragment_buffer[i][j])));
-    //     }
-    // }
-    // ofs.close();
-
     std::vector<unsigned char> pixmap(width*height*3);
     for (size_t i = 0; i < height*width; ++i) {
         vec3f &c = fragment_buffer[i];

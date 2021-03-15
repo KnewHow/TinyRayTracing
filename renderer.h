@@ -45,7 +45,7 @@ private:
      * @return if the ray intersect with the scene, return the hit point color, otherwise return the background color 
      * 
     */
-    vec3f cast_ray(const vec3f& orig, const vec3f& d, const std::vector<Sphere>& scene, const std::vector<Light>& lights, std::size_t depth = 0, const vec3f& backgound = vec3f(0.2, 0.7, 0.8));
+    vec3f cast_ray(const vec3f& orig, const vec3f& d, const std::vector<Sphere>& scene, const std::vector<Light>& lights, std::size_t depth = 0);
     
     /**
      * a ray intersect with a scene, it will return hit infomation with the lastest sphere
