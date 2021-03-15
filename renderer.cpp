@@ -33,8 +33,8 @@ vec3f Renderer::cast_ray(const vec3f& orig, const vec3f& d, const std::vector<Sp
     vec3f hitPoint, normal;
     Material material;
     if(depth > ray_trace_times || !scene_intersect(orig, d, scene, hitPoint, normal, material)) {
-        int a = std::max(0, std::min(env.getWidth() -1, static_cast<int>((atan2(d.z, d.x)/(2 * M_PI) + .5)* env.getWidth()))); // TODO understand why
-        int b = std::max(0, std::min(env.getHeight() -1, static_cast<int>(acos(d.y)/M_PI * env.getHeight()))); // TODO understand why
+        int a = std::max(0, std::min(env.getWidth() -1, static_cast<int>((atan2(d.z, d.x) / (2 * M_PI) + .5)* env.getWidth()))); // TODO understand why
+        int b = std::max(0, std::min(env.getHeight() -1, static_cast<int>(acos(d.y) / M_PI * env.getHeight()))); // TODO understand why
         return env.getPixelColor(a, b); // background color
     }
 
