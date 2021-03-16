@@ -4,7 +4,7 @@
 #include <string>
 
 #include "image.h"
-#include "sphere.h"
+#include "mesh/sphere.h"
 #include "geometry.h"
 #include "light.h"
 

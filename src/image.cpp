@@ -4,7 +4,7 @@
 #include <iostream>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "lib/stb/stb_image_write.h"
+#include "stb_image_write.h"
 
 Image::Image(int w, int h)
     :width(w), height(h), fragment_buffer(w * h, vec3f(0,0,0))

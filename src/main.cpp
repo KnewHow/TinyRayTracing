@@ -4,7 +4,7 @@
 #include "renderer.h"
 #include "global.h"
 #define STB_IMAGE_IMPLEMENTATION
-#include "lib/stb/stb_image.h"
+#include "stb_image.h"
 
 int main(int, char**) {
     int width = 1366;

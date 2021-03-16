@@ -7,7 +7,27 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 include(CTest)
 enable_testing()
 
-add_executable(TinyRayTracer main.cpp geometry.h geometry.cpp image.h image.cpp renderer.h renderer.cpp global.h sphere.h sphere.cpp material.h material.cpp light.h light.cpp)
+
+set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
+
+file(GLOB SOURCES
+    "${SRC_DIR}/*.h"
+    "${SRC_DIR}/*.cpp"
+    "${SRC_DIR}/mesh/*.h"
+    "${SRC_DIR}/mesh/*.cpp"
+)
+
+# Executable definition and properties
+add_executable(${PROJECT_NAME} ${SOURCES})
+target_include_directories(${PROJECT_NAME} PRIVATE "${SRC_DIR}")
+
+# STB
+set(STB_DIR "${LIB_DIR}/stb")
+target_include_directories(${PROJECT_NAME} PRIVATE "${STB_DIR}")
+
+
+# add_executable(TinyRayTracer main.cpp geometry.h geometry.cpp image.h image.cpp renderer.h renderer.cpp global.h sphere.h sphere.cpp material.h material.cpp light.h light.cpp mesh.h mesh.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
