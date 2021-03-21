@@ -29,7 +29,7 @@ vec3f Renderer::refract(const vec3f& I, const vec3f& N, const float& refractive_
 }
 
 
-vec3f Renderer::cast_ray(const vec3f& orig, const vec3f& d, const std::vector<Sphere>& scene, const std::vector<Light>& lights, std::size_t depth) {
+vec3f Renderer::cast_ray(const vec3f& orig, const vec3f& d, const std::vector<std::shared_ptr<Mesh>>& scene, const std::vector<Light>& lights, std::size_t depth) {
     vec3f hitPoint, normal;
     Material material;
     if(depth > ray_trace_times || !scene_intersect(orig, d, scene, hitPoint, normal, material)) {
@@ -68,7 +68,7 @@ vec3f Renderer::cast_ray(const vec3f& orig, const vec3f& d, const std::vector<Sp
     
 }
 
-void Renderer::render(const std::vector<Sphere>& scene, const std::vector<Light>& lights) {
+void Renderer::render(const std::vector<std::shared_ptr<Mesh>>& scene, const std::vector<Light>& lights) {
     // #pragma omp parallel for
     for(size_t x = 0; x < image.getWidth(); x++) {
         for(size_t y = 0; y < image.getHeight(); y++) {
@@ -80,15 +80,15 @@ void Renderer::render(const std::vector<Sphere>& scene, const std::vector<Light>
     }
 }
 
-bool Renderer::scene_intersect(const vec3f& orig, const vec3f& d, const std::vector<Sphere>& spheres, vec3f& hit, vec3f& normal, Material& material) {
-    float sphere_t = std::numeric_limits<float>::max();
-    for(const Sphere& sphere: spheres) {
-        float t0;
-        if(sphere.rayIntersect(orig, d, t0) && t0 < sphere_t) {
-            sphere_t = t0;
-            hit = orig + sphere_t * d;
-            normal = (hit - sphere.getCenter()).normalize();
-            material = sphere.getMaterial();
+bool Renderer::scene_intersect(const vec3f& orig, const vec3f& d, const std::vector<std::shared_ptr<Mesh>>& scene, vec3f& hit, vec3f& normal, Material& material) {
+    float mesh_t = std::numeric_limits<float>::max();
+    for(const auto& mesh: scene) {
+        auto rs = mesh->rayIntersect(orig, d);
+        if(rs.has_value() && rs.value().t < mesh_t) {
+            mesh_t = rs.value().t;
+            hit = rs.value().hitPosition;
+            normal = rs.value().normal;
+            material = rs.value().material;
         }
     }
 
@@ -97,7 +97,7 @@ bool Renderer::scene_intersect(const vec3f& orig, const vec3f& d, const std::vec
         float cb_t= -(orig.y + 4) / d.y; // the checkerboard plane has equation y = -4, cb_t is ray intersect with the checkerboard plane
         vec3f cb_hit_point = orig + cb_t * d; // the point the ray intersect with checkerboard plane
         if(cb_t > 0 && std::fabs(cb_hit_point.x) < 10 && 
-            cb_hit_point.z < -10 && cb_hit_point.z > -30 && cb_t < sphere_t) {
+            cb_hit_point.z < -10 && cb_hit_point.z > -30 && cb_t < mesh_t) {
                 checkerboard_t = cb_t;
                 hit = cb_hit_point;
                 normal = vec3f(0, 1, 0);
@@ -105,7 +105,7 @@ bool Renderer::scene_intersect(const vec3f& orig, const vec3f& d, const std::vec
             }
     } 
 
-    return std::min(sphere_t, checkerboard_t) < 1000;
+    return std::min(mesh_t, checkerboard_t) < 1000;
 }
 
 void Renderer::output(const std::string& filepath) {

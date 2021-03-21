@@ -10,15 +10,17 @@ Sphere::Sphere(const vec3f& c, float r, const Material& m)
 
 Sphere::~Sphere(){}
 
-bool Sphere::rayIntersect(const vec3f& orig, const vec3f& d, float& t0) const {
+std::optional<IntersectResult> Sphere::rayIntersect(const vec3f& orig, const vec3f& d) const {
     vec3f L = center - orig;
     float tca = L * d;
     float d2 = L * L - tca * tca;
-    if(d2 > radius * radius) return false;
+    if(d2 > radius * radius) return std::nullopt;
     float thc = sqrtf(radius * radius - d2);
-    t0 = tca - thc;
+    float t = tca - thc;
     float t1 = tca + thc;
-    if(t0 < 0) t0 = t1;
-    if(t0 < 0)  return false;
-    return true;
+    if(t < 0) t = t1;
+    if(t < 0)  return std::nullopt;
+    vec3f hitPoint = orig + t * d;
+    vec3f normal = (hitPoint - center).normalize();
+    return IntersectResult{t, hitPoint, material, normal};
 }

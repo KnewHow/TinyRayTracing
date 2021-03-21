@@ -2,10 +2,12 @@
 #define __RENDERER_H__
 
 #include <string>
+#include <memory>
 
 #include "image.h"
-#include "mesh/sphere.h"
+#include "mesh/mesh.h"
 #include "geometry.h"
+#include "material.h"
 #include "light.h"
 
 class Renderer {
@@ -45,19 +47,19 @@ private:
      * @return if the ray intersect with the scene, return the hit point color, otherwise return the background color 
      * 
     */
-    vec3f cast_ray(const vec3f& orig, const vec3f& d, const std::vector<Sphere>& scene, const std::vector<Light>& lights, std::size_t depth = 0);
+    vec3f cast_ray(const vec3f& orig, const vec3f& d, const std::vector<std::shared_ptr<Mesh>>& scene, const std::vector<Light>& lights, std::size_t depth = 0);
     
     /**
-     * a ray intersect with a scene, it will return hit infomation with the lastest sphere
+     * a ray intersect with a scene, it will return hit infomation with the lastest mesh
      * @param orig the ray original point
      * @param d the ray directory
-     * @param spheres the spheres in the scene
-     * @param hit the hit the ray hit the sphere
+     * @param mesh the mesh in the scene
+     * @param hit the hit the ray hit the mesh
      * @param normal the hit point normal
-     * @param material the material of the sphere
+     * @param material the material of the mesh
      * @return if the ray intersect with the secen, true wull be return, otherwise it will return false
     */
-    bool scene_intersect(const vec3f& orig, const vec3f& d, const std::vector<Sphere>& spheres, vec3f& hit, vec3f& normal, Material& material);
+    bool scene_intersect(const vec3f& orig, const vec3f& d, const std::vector<std::shared_ptr<Mesh>>& scene, vec3f& hit, vec3f& normal, Material& material);
 
 public:
     /**
@@ -68,7 +70,7 @@ public:
     */
     Renderer(Image& m, const float f, const Image& e);
     ~Renderer();
-    void render(const std::vector<Sphere>& sphere, const std::vector<Light>& lights);
+    void render(const std::vector<std::shared_ptr<Mesh>>& scene, const std::vector<Light>& lights);
     void output(const std::string& filepath);
     void setRayTraceTimes(const int& t);
 };
