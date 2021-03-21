@@ -69,7 +69,7 @@ vec3f Renderer::cast_ray(const vec3f& orig, const vec3f& d, const std::vector<st
 }
 
 void Renderer::render(const std::vector<std::shared_ptr<Mesh>>& scene, const std::vector<Light>& lights) {
-    // #pragma omp parallel for
+    #pragma omp parallel for
     for(size_t x = 0; x < image.getWidth(); x++) {
         for(size_t y = 0; y < image.getHeight(); y++) {
             float dx = (2 * (x  + 0.5)/(float)image.getWidth() - 1) * std::tan(fov / 2.0f) * image.getRatio();

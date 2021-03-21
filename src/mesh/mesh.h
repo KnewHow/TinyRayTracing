@@ -17,6 +17,13 @@ struct IntersectResult
     vec3f normal; // the normal of the hitpoint
 };
 
+struct AABB // define the Axis-aligned-bounding-box
+{
+    vec3f min;
+    vec3f max;
+};
+
+
 /**
  * A mesh class with different geometry will intersecte with ray
 */

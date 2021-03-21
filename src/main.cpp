@@ -3,14 +3,16 @@
 
 #include "image.h"
 #include "renderer.h"
+#include "mesh/mesh.h"
 #include "mesh/sphere.h"
+#include "mesh/model.h"
 #include "global.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 int main(int, char**) {
-    int width = 1366;
-    int height = 768;
+    int width = 512;
+    int height = 512;
     Image image(width, height);
     std::string result_path = "../out.jpg";
     
@@ -40,11 +42,12 @@ int main(int, char**) {
     Material red_rubber(vec4f(0.9,  0.1, 0.0, 0.0), vec3f(0.3, 0.1, 0.1),   10.0f, 1.0f);
     Material     mirror(vec4f(0.0, 10.0, 0.8, 0.0), vec3f(1.0, 1.0, 1.0), 1425.0f, 1.0f);
 
-    std::vector<std::shared_ptr<Mesh>> spheres;
-    spheres.push_back(std::make_shared<Sphere>(vec3f(-3,    0,   -16), 2,      ivory));
-    spheres.push_back(std::make_shared<Sphere>(vec3f(-1.0, -1.5, -12), 2,      glass));
-    spheres.push_back(std::make_shared<Sphere>(vec3f( 1.5, -0.5, -18), 3, red_rubber));
-    spheres.push_back(std::make_shared<Sphere>(vec3f( 7,    5,   -20), 4,     mirror));
+    std::vector<std::shared_ptr<Mesh>> scene;
+    scene.push_back(std::make_shared<Sphere>(vec3f(-3,    0,   -16), 2,      ivory));
+    scene.push_back(std::make_shared<Sphere>(vec3f(-1.0, -1.5, -12), 2,      glass));
+    scene.push_back(std::make_shared<Sphere>(vec3f( 1.5, -0.5, -18), 3, red_rubber));
+    scene.push_back(std::make_shared<Sphere>(vec3f( 7,    5,   -20), 4,     mirror));
+    scene.push_back(std::make_shared<Model>("../res/duck.obj", mirror));
 
     std::vector<Light> lights;
     lights.push_back(Light(vec3f(-20, 20,  20), 1.5));
@@ -52,10 +55,8 @@ int main(int, char**) {
     lights.push_back(Light(vec3f( 30, 20,  30), 1.7));
     
     Renderer r(image, MY_PI/3, envImage);
-    r.render(spheres, lights);
+    r.render(scene, lights);
     r.output(result_path);
-
-
     
     image.write(result_path);
     return 0;
