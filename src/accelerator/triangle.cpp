@@ -8,6 +8,8 @@ Triangle::Triangle(const vec3f& v0, const vec3f& v1, const vec3f& v2, const Mate
     verties[2] = v2;
 }
 
+ Triangle::~Triangle() {}
+
 std::optional<IntersectResult> Triangle::intersect(const Ray& ray) const {
     vec3f E1 = verties[1] - verties[0];
     vec3f E2 = verties[2] - verties[0];
@@ -23,4 +25,15 @@ std::optional<IntersectResult> Triangle::intersect(const Ray& ray) const {
     } else {
         return std::nullopt;
     }
+}
+
+AABB Triangle::getBounding() const {
+    AABB b;
+    for(int i = 0; i < 3; i++) {
+        for(int j = 0; j < 3; j++){
+            b.min[j] = std::min(b.min[j], verties[i][j]);
+            b.max[j] = std::max(b.max[j], verties[i][j]);
+        }
+    }
+    return b;
 }

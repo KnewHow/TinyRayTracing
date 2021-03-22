@@ -3,18 +3,28 @@
 
 #include <memory>
 #include <vector>
+#include <optional>
 
 #include "primitive.h"
-#include ""
+#include "boundingBox/AABB.h"
 
 /**
  * A BVH tree
 */
 struct BVHNode
 {
+    BVHNode() {
+        bounding = AABB();
+        left = nullptr;
+        right = nullptr;
+        p = nullptr;
+    }
+    ~BVHNode() {
 
-    BVHNode* left;
-    BVHNode* right;
+    }
+    AABB bounding;
+    std::shared_ptr<BVHNode> left;
+    std::shared_ptr<BVHNode> right;
     std::shared_ptr<Primitive> p;
 };
 
@@ -24,9 +34,14 @@ struct BVHNode
 */
 class BVHAccelerator {
 
+    BVHAccelerator(const std::vector<std::shared_ptr<Primitive>>& ps);
+    ~BVHAccelerator();
+    std::optional<IntersectResult> intersect(const Ray& ray);
 private:
-    std::vector<std::shared_ptr<Primitive>> primitives;
-
+    std::shared_ptr<BVHNode> recursiveBuild(std::vector<std::shared_ptr<Primitive>> ps);
+    std::optional<IntersectResult> intersectRecursive(const Ray& ray, std::shared_ptr<BVHNode> r);
+    const std::vector<std::shared_ptr<Primitive>>& primitives;
+    std::shared_ptr<BVHNode> root;
 };
 
 

@@ -10,7 +10,7 @@
 #include "mesh/sphere.h"
 #include "mesh/model.h"
 #include "global.h"
-#include "accelerator/triangle.h"
+#include "accelerator/bvh.h"
 
 
 
@@ -63,6 +63,5 @@ int main(int, char**) {
     r.output(result_path);
     
     image.write(result_path);
-    Triangle* t = new Triangle(vec3f(0,0,0),vec3f(0,0,0),vec3f(0,0,0), ivory);
     return 0;
 }

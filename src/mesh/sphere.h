@@ -19,7 +19,7 @@ public:
     ~Sphere();
 
    
-    std::optional<IntersectResult> rayIntersect(const vec3f& orig, const vec3f& d) const override;
+    std::optional<IntersectResult> rayIntersect(const Ray& ray) const override;
     inline vec3f getCenter() const { return center; }
     inline float getRadius() const { return radius; }
     inline Material getMaterial() const { return material; }

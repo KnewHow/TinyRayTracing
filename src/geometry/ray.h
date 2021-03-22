@@ -22,6 +22,8 @@ struct IntersectResult
 struct Ray {
     vec3f o;
     vec3f d;
+    Ray(const vec3f op, const vec3f directory)
+        :o(op), d(directory){}
 };
 
 #endif

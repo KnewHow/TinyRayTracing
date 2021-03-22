@@ -7,6 +7,7 @@
 #include "image.h"
 #include "mesh/mesh.h"
 #include "geometry/geometry.h"
+#include "geometry/ray.h"
 #include "material/material.h"
 #include "light.h"
 
@@ -39,27 +40,25 @@ private:
      * cast ray insersect with secen, and return the color the ray pass the pixel. 
      * In this function, it will calculate the color with lights
      * 
-     * @param orig the original point of the ray
-     * @param d the directory of the ray
+     * @param ray the ray contians original point and directory
      * @param scene the scene consisted by shpere
      * @param lights the lights of the scene
      * @param depth the depth the ray recursive to search reflection ray, defalut is 0
      * @return if the ray intersect with the scene, return the hit point color, otherwise return the background color 
      * 
     */
-    vec3f cast_ray(const vec3f& orig, const vec3f& d, const std::vector<std::shared_ptr<Mesh>>& scene, const std::vector<Light>& lights, std::size_t depth = 0);
+    vec3f cast_ray(const Ray& ray, const std::vector<std::shared_ptr<Mesh>>& scene, const std::vector<Light>& lights, std::size_t depth = 0);
     
     /**
      * a ray intersect with a scene, it will return hit infomation with the lastest mesh
-     * @param orig the ray original point
-     * @param d the ray directory
+     * @param ray the ray contians original point and directory
      * @param mesh the mesh in the scene
      * @param hit the hit the ray hit the mesh
      * @param normal the hit point normal
      * @param material the material of the mesh
      * @return if the ray intersect with the secen, true wull be return, otherwise it will return false
     */
-    bool scene_intersect(const vec3f& orig, const vec3f& d, const std::vector<std::shared_ptr<Mesh>>& scene, vec3f& hit, vec3f& normal, Material& material);
+    bool scene_intersect(const Ray& ray, const std::vector<std::shared_ptr<Mesh>>& scene, vec3f& hit, vec3f& normal, Material& material);
 
 public:
     /**

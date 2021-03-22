@@ -4,7 +4,8 @@
 #include <array>
 
 #include "mesh.h"
-#include "../boundingBox/AABB.h"
+#include "boundingBox/AABB.h"
+#include "accelerator/bvh.h"
 
 
 class Model: public Mesh {
@@ -14,26 +15,19 @@ private:
     std::vector<vec3i> faces;
     Material material;
     AABB box;
-    /**
-     * Calculating ray intersectes with AABB, if they intersect, return ture, otheriwize return false
-     * @param orig the original point of the ray
-     * @param d the directoy of the the ray
-     * @return if they intersect, return true, otherwise return false.
-    */
-    bool rayIntersectWithAABB(const vec3f& orig, const vec3f& d) const;
-    
+    std::shared_ptr<BVHAccelerator> bvh;
+
     /**
      * Calculating ray intersectes with the triangle, if they are interscting, return the t of the ray, otherwise return nullopt.
      * Algorithms refer: https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
-     * @param orig the original point of the ray
-     * @param d the directoy of the the ray
+     * @param tay the ray contains original point and directory
      * @param tri the triangle vertex in an array
      * @return if they intersecting return the t of the ray, otherwise return nullopt
     */
-    std::optional<float> rayIntersectWithTriangle(const vec3f& orig, const vec3f& d, const std::array<vec3f, 3>& tri) const;
-
+    std::optional<float> rayIntersectWithTriangle(const Ray& ray, const std::array<vec3f, 3>& tri) const;
+    void constructBVH();
 public:
     Model(const std::string& p, const Material& m);
     ~Model();
-    virtual std::optional<IntersectResult> rayIntersect(const vec3f& orig, const vec3f& d) const override;
+    virtual std::optional<IntersectResult> rayIntersect(const Ray& ray) const override;
 };

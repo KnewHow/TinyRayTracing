@@ -4,8 +4,10 @@
 #include <iostream>
 #include <sstream>
 
-std::optional<IntersectResult> Model::rayIntersect(const vec3f& orig, const vec3f& d) const {
-    if(rayIntersectWithAABB(orig, d)) {
+#include "accelerator/triangle.h"
+
+std::optional<IntersectResult> Model::rayIntersect(const Ray& ray) const {
+    if(box.intersect(ray)) {
         float t = std::numeric_limits<float>::max();
         vec3i face;
         bool isIntersection = false;
@@ -14,7 +16,7 @@ std::optional<IntersectResult> Model::rayIntersect(const vec3f& orig, const vec3
             tri[0] = vertices[f.x];
             tri[1] = vertices[f.y];
             tri[2] = vertices[f.z];
-            auto r = rayIntersectWithTriangle(orig, d, tri);
+            auto r = rayIntersectWithTriangle(ray, tri);
             if(r.has_value() && r.value() < t) {
                 t = r.value();
                 isIntersection = true;
@@ -23,7 +25,7 @@ std::optional<IntersectResult> Model::rayIntersect(const vec3f& orig, const vec3
         }
         
         if(isIntersection) {
-            vec3f hitPoint = orig + t * d;
+            vec3f hitPoint = ray.o + t * ray.d;
             vec3f normal = cross((vertices[face.y] - vertices[face.x]), (vertices[face.z] - vertices[face.x])).normalize();
             return IntersectResult{t, hitPoint, material, normal};
         }
@@ -31,13 +33,15 @@ std::optional<IntersectResult> Model::rayIntersect(const vec3f& orig, const vec3
     return std::nullopt;
 }
 
-std::optional<float> Model::rayIntersectWithTriangle(const vec3f& orig, const vec3f& d, const std::array<vec3f, 3>& tri) const {
+
+
+std::optional<float> Model::rayIntersectWithTriangle(const Ray& ray, const std::array<vec3f, 3>& tri) const {
     vec3f E1 = tri[1] - tri[0];
     vec3f E2 = tri[2] - tri[0];
-    vec3f S = orig - tri[0];
-    vec3f S1 = cross(d, E2);
+    vec3f S = ray.o - tri[0];
+    vec3f S1 = cross(ray.d, E2);
     vec3f S2 = cross(S, E1);
-    vec3f v = vec3f(S2 * E2, S1 * S, S2 * d);
+    vec3f v = vec3f(S2 * E2, S1 * S, S2 * ray.d);
     vec3f r = 1 / (S1 * E1) * v;
     if(r.x > 0 && r.y > 0 && r.z > 0 && (1 - r.y - r.z) > 0) {
         return r.x;
@@ -47,32 +51,8 @@ std::optional<float> Model::rayIntersectWithTriangle(const vec3f& orig, const ve
 }
 
 
-bool Model::rayIntersectWithAABB(const vec3f& orig, const vec3f& d) const {
-     float t_min_x = (box.min.x - orig.x) / d.x;
-     float t_min_y = (box.min.y - orig.y) / d.y;
-     float t_min_z = (box.min.z - orig.z) / d.z;
-
-     float t_max_x = (box.max.x - orig.x) / d.x;
-     float t_max_y = (box.max.y - orig.y) / d.y;
-     float t_max_z = (box.max.z - orig.z) / d.z;
-
-     if(d.x < 0) {
-         std::swap(t_max_x, t_min_x);
-     }
-     if(d.y < 0) {
-         std::swap(t_max_y, t_min_y);
-     }
-     if(d.z < 0) {
-         std::swap(t_max_z, t_min_z);
-     }
-
-    float t_enter = std::max(t_min_x, std::max(t_min_y, t_min_z));
-    float t_exit = std::min(t_max_x, std::min(t_max_y, t_max_z));
-    return t_exit > t_enter && t_exit >= 0;
- }
-
 Model::Model(const std::string& p, const Material& m)
-    :filepath(p), vertices(), faces(), material(m)
+    :filepath(p), vertices(), faces(), material(m), bvh(nullptr)
 {
     box.min = vec3f(std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
     box.max = vec3f(-std::numeric_limits<float>::max(), -std::numeric_limits<float>::max(), -std::numeric_limits<float>::max());
@@ -118,6 +98,16 @@ Model::Model(const std::string& p, const Material& m)
 
     }
     std::cout << "load model completion, vertices is: " << vertices.size() << ", faces is: " << faces.size() << std::endl;
+    constructBVH();
+}
+
+void Model::constructBVH() {
+    std::vector<std::shared_ptr<Primitive>> ps(faces.size());
+    for(const auto& f: faces) {
+        std::shared_ptr<Triangle> t = std::make_shared<Triangle>(vertices[f.x], vertices[f.y], vertices[f.z], material);
+        ps.push_back(t);
+    }
+    // TODO
 }
 
 Model::~Model() {
