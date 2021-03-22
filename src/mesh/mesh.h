@@ -3,8 +3,8 @@
 
 #include <optional>
 
-#include "geometry.h"
-#include "ray.h"
+#include "geometry/geometry.h"
+#include "geometry/ray.h"
 
 
 /**

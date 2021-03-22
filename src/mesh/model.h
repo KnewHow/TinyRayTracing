@@ -4,7 +4,7 @@
 #include <array>
 
 #include "mesh.h"
-#include "AABB.h"
+#include "../boundingBox/AABB.h"
 
 
 class Model: public Mesh {

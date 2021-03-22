@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "image.h"
-#include "geometry/mesh.h"
+#include "mesh/mesh.h"
 #include "geometry/geometry.h"
 #include "material/material.h"
 #include "light.h"

@@ -1,14 +1,18 @@
 #include <iostream>
 #include <memory>
 
-#include "image.h"
-#include "renderer.h"
-#include "geometry/mesh.h"
-#include "geometry/sphere.h"
-#include "geometry/model.h"
-#include "global.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+
+#include "image.h"
+#include "renderer.h"
+#include "mesh/mesh.h"
+#include "mesh/sphere.h"
+#include "mesh/model.h"
+#include "global.h"
+#include "accelerator/triangle.h"
+
+
 
 int main(int, char**) {
     int width = 512;
@@ -59,5 +63,6 @@ int main(int, char**) {
     r.output(result_path);
     
     image.write(result_path);
+    Triangle* t = new Triangle(vec3f(0,0,0),vec3f(0,0,0),vec3f(0,0,0), ivory);
     return 0;
 }

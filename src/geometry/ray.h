@@ -19,10 +19,7 @@ struct IntersectResult
  * Define a ray with origin pointer and directory
 */
 
-class Ray {
-public:
-
-private:
+struct Ray {
     vec3f o;
     vec3f d;
 };

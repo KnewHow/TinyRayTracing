@@ -16,6 +16,12 @@ file(GLOB SOURCES
     "${SRC_DIR}/*.cpp"
     "${SRC_DIR}/geometry/*.h"
     "${SRC_DIR}/geometry/*.cpp"
+    "${SRC_DIR}/mesh/*.h"
+    "${SRC_DIR}/mesh/*.cpp"
+    "${SRC_DIR}/accelerator/*.h"
+    "${SRC_DIR}/accelerator/*.cpp"
+    "${SRC_DIR}/boundingBox/*.h"
+    "${SRC_DIR}/boundingBox/*.cpp"
     "${SRC_DIR}/material/*.h"
     "${SRC_DIR}/material/*.cpp"
 )

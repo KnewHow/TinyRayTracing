@@ -1,7 +1,7 @@
 #ifndef __SPHERE_H__
 #define __SHPERE_H__
 
-#include "geometry.h"
+#include "geometry/geometry.h"
 #include "material/material.h"
 #include "mesh.h"
 
