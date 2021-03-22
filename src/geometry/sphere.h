@@ -2,7 +2,7 @@
 #define __SHPERE_H__
 
 #include "geometry.h"
-#include "material.h"
+#include "material/material.h"
 #include "mesh.h"
 
 

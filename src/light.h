@@ -1,7 +1,7 @@
 #ifndef __LIGHT_H__
 #define __LIGHT_H__
 
-#include "geometry.h"
+#include "geometry/geometry.h"
 
 class Light {
 private:

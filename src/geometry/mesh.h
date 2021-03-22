@@ -3,25 +3,8 @@
 
 #include <optional>
 
-#include "../geometry.h"
-#include "../material.h"
-
-/**
- * A result of a ray intersect with a mesh
-*/
-struct IntersectResult
-{
-    float t; // the t of the ray o + td intersect with the ray
-    vec3f hitPosition; // the hit point the ray intersect with meshs
-    Material material; // the material of hitpoints
-    vec3f normal; // the normal of the hitpoint
-};
-
-struct AABB // define the Axis-aligned-bounding-box
-{
-    vec3f min;
-    vec3f max;
-};
+#include "geometry.h"
+#include "ray.h"
 
 
 /**

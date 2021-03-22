@@ -5,9 +5,9 @@
 #include <memory>
 
 #include "image.h"
-#include "mesh/mesh.h"
-#include "geometry.h"
-#include "material.h"
+#include "geometry/mesh.h"
+#include "geometry/geometry.h"
+#include "material/material.h"
 #include "light.h"
 
 class Renderer {

@@ -14,8 +14,10 @@ set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
 file(GLOB SOURCES
     "${SRC_DIR}/*.h"
     "${SRC_DIR}/*.cpp"
-    "${SRC_DIR}/mesh/*.h"
-    "${SRC_DIR}/mesh/*.cpp"
+    "${SRC_DIR}/geometry/*.h"
+    "${SRC_DIR}/geometry/*.cpp"
+    "${SRC_DIR}/material/*.h"
+    "${SRC_DIR}/material/*.cpp"
 )
 
 # Executable definition and properties

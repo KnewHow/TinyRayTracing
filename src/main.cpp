@@ -3,9 +3,9 @@
 
 #include "image.h"
 #include "renderer.h"
-#include "mesh/mesh.h"
-#include "mesh/sphere.h"
-#include "mesh/model.h"
+#include "geometry/mesh.h"
+#include "geometry/sphere.h"
+#include "geometry/model.h"
 #include "global.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
