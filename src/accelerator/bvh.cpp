@@ -7,6 +7,8 @@ BVHAccelerator::BVHAccelerator(const std::vector<std::shared_ptr<Primitive>>& ps
     root = recursiveBuild(primitives);
 }
 
+BVHAccelerator::~BVHAccelerator(){}
+
 std::shared_ptr<BVHNode> BVHAccelerator::recursiveBuild(std::vector<std::shared_ptr<Primitive>> ps) {
     AABB bounding;
     for(const std::shared_ptr<Primitive>& p: ps) 
@@ -86,6 +88,5 @@ std::optional<IntersectResult> BVHAccelerator::intersectRecursive(const Ray& ray
         }
     }
     return std::nullopt;
-
 
 }

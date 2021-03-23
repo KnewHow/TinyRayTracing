@@ -15,8 +15,8 @@
 
 
 int main(int, char**) {
-    int width = 512;
-    int height = 512;
+    int width = 1366;
+    int height = 768;
     Image image(width, height);
     std::string result_path = "../out.jpg";
     
@@ -59,7 +59,11 @@ int main(int, char**) {
     lights.push_back(Light(vec3f( 30, 20,  30), 1.7));
     
     Renderer r(image, MY_PI/3, envImage);
+    time_t begin, end;
+    begin = time(nullptr);
     r.render(scene, lights);
+    end = time(nullptr);
+    std::cout << "rendering took: " << (end - begin) << " seconds." << std::endl;
     r.output(result_path);
     
     image.write(result_path);

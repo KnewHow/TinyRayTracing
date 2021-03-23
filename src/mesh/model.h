@@ -25,6 +25,7 @@ private:
      * @return if they intersecting return the t of the ray, otherwise return nullopt
     */
     std::optional<float> rayIntersectWithTriangle(const Ray& ray, const std::array<vec3f, 3>& tri) const;
+    std::optional<IntersectResult> rayIntersectOld(const Ray& ray) const;
     void constructBVH();
 public:
     Model(const std::string& p, const Material& m);

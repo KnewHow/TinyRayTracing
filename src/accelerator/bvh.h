@@ -33,7 +33,7 @@ struct BVHNode
  * A BVH accelerator, refer: http://www.pbr-book.org/3ed-2018/Primitives_and_Intersection_Acceleration/Bounding_Volume_Hierarchies.html#sec:sah
 */
 class BVHAccelerator {
-
+public:
     BVHAccelerator(const std::vector<std::shared_ptr<Primitive>>& ps);
     ~BVHAccelerator();
     std::optional<IntersectResult> intersect(const Ray& ray);

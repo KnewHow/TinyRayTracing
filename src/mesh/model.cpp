@@ -3,10 +3,16 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <time.h>
 
 #include "accelerator/triangle.h"
 
 std::optional<IntersectResult> Model::rayIntersect(const Ray& ray) const {
+    return bvh->intersect(ray);
+    // return rayIntersectOld(ray); old method to test effective
+}
+
+std::optional<IntersectResult> Model::rayIntersectOld(const Ray& ray) const {
     if(box.intersect(ray)) {
         float t = std::numeric_limits<float>::max();
         vec3i face;
@@ -32,8 +38,6 @@ std::optional<IntersectResult> Model::rayIntersect(const Ray& ray) const {
     }
     return std::nullopt;
 }
-
-
 
 std::optional<float> Model::rayIntersectWithTriangle(const Ray& ray, const std::array<vec3f, 3>& tri) const {
     vec3f E1 = tri[1] - tri[0];
@@ -102,12 +106,17 @@ Model::Model(const std::string& p, const Material& m)
 }
 
 void Model::constructBVH() {
-    std::vector<std::shared_ptr<Primitive>> ps(faces.size());
+    time_t begin, end;
+    begin = time(NULL);
+    std::vector<std::shared_ptr<Primitive>> ps;
+    ps.reserve(faces.size());
     for(const auto& f: faces) {
         std::shared_ptr<Triangle> t = std::make_shared<Triangle>(vertices[f.x], vertices[f.y], vertices[f.z], material);
         ps.push_back(t);
     }
-    // TODO
+    bvh = std::make_shared<BVHAccelerator>(ps);
+    end = time(NULL);
+    std::cout << "build bvh took " << (end - begin) << " seconds" << std::endl;
 }
 
 Model::~Model() {
